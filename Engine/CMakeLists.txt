@@ -7,6 +7,8 @@ add_library(Engine STATIC
     Graphics/SwapChain.h Graphics/SwapChain.cpp
     Graphics/Renderer.h Graphics/Renderer.cpp
     Graphics/ShaderCompiler.h Graphics/ShaderCompiler.cpp
+
+    Math/Vector.h Math/Matrix.h
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
