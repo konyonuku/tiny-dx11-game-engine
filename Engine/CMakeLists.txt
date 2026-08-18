@@ -9,6 +9,7 @@ add_library(Engine STATIC
     Graphics/ShaderCompiler.h Graphics/ShaderCompiler.cpp
 
     Math/Vector.h Math/Matrix.h
+    Graphics/Buffer.h Graphics/Buffer.cpp
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
