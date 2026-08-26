@@ -15,9 +15,15 @@ namespace
     };
 
     const Vertex kVertices[] = {
-        { {  0.0f,  0.5f, 0.0f }, { 1.f, 0.f, 0.f, 1.f } },
-        { {  0.5f, -0.5f, 0.0f }, { 0.f, 1.f, 0.f, 1.f } },
-        { { -0.5f, -0.5f, 0.0f }, { 0.f, 0.f, 1.f, 1.f } },
+        { { -0.5f,  0.5f, 0.0f }, { 1.f, 0.f, 0.f, 1.f } },
+        { {  0.5f,  0.5f, 0.0f }, { 0.f, 1.f, 0.f, 1.f } },
+        { {  0.5f, -0.5f, 0.0f }, { 0.f, 0.f, 1.f, 1.f } },
+        { { -0.5f, -0.5f, 0.0f }, { 1.f, 1.f, 0.f, 1.f } },
+    };
+
+    const uint32_t kIndices[] {
+        0, 1, 2,
+        0, 2, 3,
     };
 }
 
@@ -44,18 +50,13 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
 
     HR_CHECK(device->CreateInputLayout(inputElements, ARRAYSIZE(inputElements), vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), &mInputLayout));
 
-    // D3D11_BUFFER_DESC bufferDesc {};
-    // bufferDesc.ByteWidth = sizeof(kVertices);
-    // bufferDesc.Usage     = D3D11_USAGE_IMMUTABLE;
-    // bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
-    // D3D11_SUBRESOURCE_DATA initialData {};
-    // initialData.pSysMem = kVertices;
-
-    // HR_CHECK(device->CreateBuffer(&bufferDesc, &initialData, &mVertexBuffer));
     if(!mVertexBuffer.Create(graphicsDevice, kVertices, ARRAYSIZE(kVertices))) 
         return false;
 
+    if(!mIndexBuffer.Create(graphicsDevice, kIndices, ARRAYSIZE(kIndices)))
+        return false;
+    
     Core::LogInfo("Triangle renderer created.");
     return true;
 }
@@ -68,11 +69,11 @@ void TriangleRenderer::Render(ID3D11DeviceContext* context)
 
     context->IASetInputLayout(mInputLayout.Get());
     mVertexBuffer.Bind(context);
-    // context->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+    mIndexBuffer.Bind(context);
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     context->VSSetShader(mVertexShader.Get(), nullptr, 0);
     context->PSSetShader(mPixelShader.Get(), nullptr, 0);
 
-    context->Draw(mVertexBuffer.Count(), 0);
+    context->DrawIndexed(mIndexBuffer.Count(), 0, 0);
 }

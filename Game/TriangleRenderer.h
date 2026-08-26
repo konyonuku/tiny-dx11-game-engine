@@ -17,4 +17,5 @@ private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader>  mPixelShader;
     Microsoft::WRL::ComPtr<ID3D11InputLayout>  mInputLayout;
     VertexBuffer                               mVertexBuffer;
+    IndexBuffer                                mIndexBuffer;
 };
