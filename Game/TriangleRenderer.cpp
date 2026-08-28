@@ -57,11 +57,15 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
     if(!mIndexBuffer.Create(graphicsDevice, kIndices, ARRAYSIZE(kIndices)))
         return false;
     
+    if(!mConstantBuffer.Create(graphicsDevice))
+        return false;
+
+
     Core::LogInfo("Triangle renderer created.");
     return true;
 }
 
-void TriangleRenderer::Render(ID3D11DeviceContext* context)
+void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& world)
 {
     // const UINT stride = sizeof(Vertex);
     // const UINT offset = 0;
@@ -71,6 +75,15 @@ void TriangleRenderer::Render(ID3D11DeviceContext* context)
     mVertexBuffer.Bind(context);
     mIndexBuffer.Bind(context);
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+    ObjectConstant ojc{};
+    ojc.world = world.Transposed();    
+    
+    if(!mConstantBuffer.Update(context, ojc))
+        return;
+    mConstantBuffer.BindVS(context, 0);
+
 
     context->VSSetShader(mVertexShader.Get(), nullptr, 0);
     context->PSSetShader(mPixelShader.Get(), nullptr, 0);

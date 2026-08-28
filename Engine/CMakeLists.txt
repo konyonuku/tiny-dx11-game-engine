@@ -8,7 +8,7 @@ add_library(Engine STATIC
     Graphics/Renderer.h Graphics/Renderer.cpp
     Graphics/ShaderCompiler.h Graphics/ShaderCompiler.cpp
 
-    Math/Vector.h Math/Matrix.h
+    Math/Vector.h Math/Matrix.h Math/Transform.h
     Graphics/Buffer.h Graphics/Buffer.cpp
 )
 

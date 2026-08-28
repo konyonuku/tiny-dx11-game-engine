@@ -1,3 +1,8 @@
+cbuffer ObjectConstant : register(b0)
+{
+    float4x4 world; //column-major
+}
+
 struct VSInput
 {
     float3 position : POSITION;
@@ -13,7 +18,8 @@ struct VSOutput
 VSOutput VSMain(VSInput input)
 {
     VSOutput output;
-    output.position = float4(input.position, 1.0f);
+    // output.position = float4(input.position, 1.0f);
+    output.position = mul(float4(input.position, 1.0f), world);
     output.color = input.color;
     return output;
 }
