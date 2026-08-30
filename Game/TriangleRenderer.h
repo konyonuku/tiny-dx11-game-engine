@@ -10,7 +10,7 @@ class TriangleRenderer
 {
 public:
     bool Create(GraphicsDevice& device);
-    void Render(ID3D11DeviceContext* context, const Matrix4x4& world);
+    void Render(ID3D11DeviceContext* context, const Matrix4x4& wvp);
 
 private:
     Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader;
@@ -21,7 +21,7 @@ private:
     
     struct ObjectConstant
     {
-        Matrix4x4 world;
+        Matrix4x4 wvp;
     };
     ConstantBuffer<ObjectConstant>             mConstantBuffer;
 };

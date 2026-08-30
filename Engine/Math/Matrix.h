@@ -79,7 +79,7 @@ struct Matrix4x4 {
         res.m[1][0] = xAxis.y,          res.m[1][1] = yAxis.y,          res.m[1][2] = zAxis.y;
         res.m[2][0] = xAxis.z,          res.m[2][1] = yAxis.z,          res.m[2][2] = zAxis.z;
         res.m[3][0] = -xAxis.Dot(eye),  res.m[3][1] = -yAxis.Dot(eye),  res.m[3][2] = -zAxis.Dot(eye);
-        return res;        
+        return res;      
     }
 
     static Matrix4x4 PerspectiveFovLH(float fovY, float aspect, float nearZ, float farZ) {

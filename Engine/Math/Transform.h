@@ -19,7 +19,3 @@ struct Transform {
         return (s * rx * ry * rz * t);
     }
 };
-    // ObjectConstant ojc{};
-    // ojc.world = Matrix4x4::Identity().Transposed();
-    // ojc.world = Matrix4x4::Scale(0.5f, 0.5f, 1.0f).Transposed();
-    // ojc.world = Matrix4x4::Translation(0.3f, 0.3f, 0.f).Transposed();
