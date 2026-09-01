@@ -108,7 +108,7 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
     return true;
 }
 
-void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& wvp)
+void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& world, const Matrix4x4& wvp)
 {
     // const UINT stride = sizeof(Vertex);
     // const UINT offset = 0;
@@ -121,7 +121,8 @@ void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& wvp
 
 
     ObjectConstant ojc{};
-    ojc.wvp = wvp.Transposed();    
+    ojc.wvp = wvp.Transposed();
+    ojc.world = world.Transposed();
     
     if(!mConstantBuffer.Update(context, ojc))
         return;

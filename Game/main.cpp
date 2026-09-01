@@ -53,7 +53,7 @@ protected:
         const Matrix4x4 projection = mCamera.ProjectionMatrix();
         const Matrix4x4 wvp = world * view * projection;
 
-        mTriangle.Render(renderer.Context(), wvp);
+        mTriangle.Render(renderer.Context(), world, wvp);
     }
 
 private:
