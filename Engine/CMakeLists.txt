@@ -11,6 +11,9 @@ add_library(Engine STATIC
     Math/Vector.h Math/Matrix.h Math/Transform.h
     Graphics/Buffer.h Graphics/Buffer.cpp
     Graphics/Camera.h Graphics/Camera.cpp
+    Graphics/Texture2D.h Graphics/Texture2D.cpp
+
+    Library/stb_image.h
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
