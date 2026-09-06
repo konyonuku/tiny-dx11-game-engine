@@ -85,7 +85,10 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
     if(!mIndexBuffer.Create(graphicsDevice, kIndices, ARRAYSIZE(kIndices)))
         return false;
     
-    if(!mConstantBuffer.Create(graphicsDevice))
+    if(!mObjectConstantBuffer.Create(graphicsDevice))
+        return false;
+
+    if(!mLightConstantBuffer.Create(graphicsDevice))
         return false;
 
     if(!mTexture.CreateFromFile(graphicsDevice, "../../../../../Assets/Textures/uv_checker_256.png"))
@@ -108,7 +111,7 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
     return true;
 }
 
-void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& world, const Matrix4x4& wvp)
+void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& world, const Matrix4x4& wvp, const Vector3& camera)
 {
     // const UINT stride = sizeof(Vertex);
     // const UINT offset = 0;
@@ -124,9 +127,20 @@ void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& wor
     ojc.wvp = wvp.Transposed();
     ojc.world = world.Transposed();
     
-    if(!mConstantBuffer.Update(context, ojc))
-        return;
-    mConstantBuffer.BindVS(context, 0);
+    if(!mObjectConstantBuffer.Update(context, ojc)) return;
+    mObjectConstantBuffer.BindVS(context, 0); // connecting to vs b0
+
+
+    LightConstant light {};
+    light.lightDirection    = { 1.0f, -1.0f, 1.0f}; // direction from light source to surface 
+    light.lightColor        = { 1.0f,  1.0f,  1.0f};
+    light.lightIntensity    = 0.7f;
+    light.ambientIntensity  = 0.1f;
+    light.cameraPosition    = camera;
+    light.padding           = 0.0f;
+
+    if(!mLightConstantBuffer.Update(context, light)) return;
+    mLightConstantBuffer.BindPS(context, 1);
 
     context->VSSetShader(mVertexShader.Get(), nullptr, 0);
 

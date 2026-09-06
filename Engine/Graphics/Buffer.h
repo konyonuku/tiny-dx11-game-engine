@@ -83,7 +83,9 @@ public:
         context->VSSetConstantBuffers(slot, 1, mBuffer.GetAddressOf());
     }
 
-    // void BindPS(ID3D11DeviceContext* context, uint32_t slot = 0) const;
+    void BindPS(ID3D11DeviceContext* context, uint32_t slot = 0) const {
+        context->PSSetConstantBuffers(slot, 1, mBuffer.GetAddressOf());
+    }
 
 private:
     ComPtr<ID3D11Buffer> mBuffer;

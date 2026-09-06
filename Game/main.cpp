@@ -37,13 +37,13 @@ protected:
         mTransform.rotation.y += mRotationSpeed * deltaTime;
         // mTransform.rotation.z += mRotationSpeed * deltaTime;
 
-        mCameraAngle += mCameraSpeed * deltaTime;
-        Vector3 eye {std::cos(mCameraAngle) * mCameraRadius, 0.f, std::sin(mCameraAngle) * mCameraRadius};
-        mCamera.SetLookAt(
-            eye,
-            {0.f, 0.f, 0.f},
-            {0.f, 1.f, 0.f}
-        );
+        // mCameraAngle += mCameraSpeed * deltaTime;
+        // Vector3 eye {std::cos(mCameraAngle) * mCameraRadius, 0.f, std::sin(mCameraAngle) * mCameraRadius};
+        // mCamera.SetLookAt(
+        //     eye,
+        //     {0.f, 0.f, 0.f},
+        //     {0.f, 1.f, 0.f}
+        // );
     }
 
     void OnRender(Renderer& renderer) override
@@ -53,13 +53,13 @@ protected:
         const Matrix4x4 projection = mCamera.ProjectionMatrix();
         const Matrix4x4 wvp = world * view * projection;
 
-        mTriangle.Render(renderer.Context(), world, wvp);
+        mTriangle.Render(renderer.Context(), world, wvp, mCamera.Position());
     }
 
 private:
     TriangleRenderer mTriangle;
     Transform        mTransform;
-    float            mRotationSpeed = 0.4f;
+    float            mRotationSpeed = 2.0f;
     float            mDelay = 1.f;
     float            mElapsedTime = 0.f;
 

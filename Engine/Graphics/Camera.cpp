@@ -3,6 +3,7 @@
 void Camera::SetLookAt(const Vector3 &eye, const Vector3 &target, const Vector3 &up)
 {
     mView = Matrix4x4::LookAtLH(eye, target, up);
+    mPosition = eye;
 }
 
 void Camera::SetPerspective(float fovY, float aspect, float nearZ, float farZ)
