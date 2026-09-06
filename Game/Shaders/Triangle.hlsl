@@ -13,6 +13,13 @@ cbuffer LightConstant : register(b1)
     float3 cameraPosition;
     float  padding;
 };
+cbuffer MaterialConstant : register(b2)
+{
+    float3 diffuseColor;
+    float  specularPower;
+    float3 specularColor;
+    float  padding2;
+};
 
 Texture2D diffuseTexture : register(t0);
 SamplerState linearSampler : register(s0);
@@ -55,15 +62,14 @@ float4 PSMain(VSOutput input) : SV_Target
 
     float3 toCamera = normalize(cameraPosition - input.worldPosition);
     float3 reflection = reflect(-toLight, normal);
-    float specularPower = 8.0f;
+
     float specularFactor = 0.0f;
     if(diffuseFactor > 0.0f) specularFactor = pow(saturate(dot(toCamera, reflection)), specularPower);
      
-    float3 materialSpecularColor = float3(1.0f, 1.0f, 1.0f);
 
-    float3 diffuse = textureColor.rgb * lightColor * diffuseFactor * lightIntensity;
-    float3 ambient = textureColor.rgb * ambientIntensity;
-    float3 specular = materialSpecularColor * lightColor * specularFactor * lightIntensity;
+    float3 diffuse = textureColor.rgb * diffuseColor * lightColor * diffuseFactor * lightIntensity;
+    float3 ambient = textureColor.rgb * diffuseColor * ambientIntensity;
+    float3 specular = specularColor * lightColor * specularFactor * lightIntensity;
 
     float3 finalColor = diffuse + ambient + specular;
 

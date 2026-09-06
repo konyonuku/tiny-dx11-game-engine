@@ -12,6 +12,8 @@ add_library(Engine STATIC
     Graphics/Buffer.h Graphics/Buffer.cpp
     Graphics/Camera.h Graphics/Camera.cpp
     Graphics/Texture2D.h Graphics/Texture2D.cpp
+    Graphics/Mesh.h Graphics/Mesh.cpp
+    Graphics/Material.h Graphics/Material.cpp
 
     Library/stb_image.h
 )

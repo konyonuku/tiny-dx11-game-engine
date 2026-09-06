@@ -79,10 +79,7 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
     HR_CHECK(device->CreateInputLayout(inputElements, ARRAYSIZE(inputElements), vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), &mInputLayout));
 
 
-    if(!mVertexBuffer.Create(graphicsDevice, kVertices, ARRAYSIZE(kVertices))) 
-        return false;
-
-    if(!mIndexBuffer.Create(graphicsDevice, kIndices, ARRAYSIZE(kIndices)))
+    if(!mMesh.Create(graphicsDevice, kVertices, ARRAYSIZE(kVertices), kIndices, ARRAYSIZE(kIndices))) 
         return false;
     
     if(!mObjectConstantBuffer.Create(graphicsDevice))
@@ -91,8 +88,9 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
     if(!mLightConstantBuffer.Create(graphicsDevice))
         return false;
 
-    if(!mTexture.CreateFromFile(graphicsDevice, "../../../../../Assets/Textures/uv_checker_256.png"))
+    if(!mMaterial.Create(graphicsDevice, "../../../../../Assets/Textures/uv_checker_256.png"))
         return false;
+
 
     D3D11_SAMPLER_DESC desc{};
     desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -104,7 +102,7 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
     desc.MinLOD = 0.0f;
     desc.MaxLOD = D3D11_FLOAT32_MAX;
 
-    device->CreateSamplerState(&desc, mSamplerState.GetAddressOf());
+    HR_CHECK(device->CreateSamplerState(&desc, mSamplerState.GetAddressOf()));
 
     Core::LogInfo("Triangle renderer created.");
     
@@ -113,13 +111,8 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
 
 void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& world, const Matrix4x4& wvp, const Vector3& camera)
 {
-    // const UINT stride = sizeof(Vertex);
-    // const UINT offset = 0;
-    // ID3D11Buffer* vertexBuffer = mVertexBuffer.Get();
-
     context->IASetInputLayout(mInputLayout.Get());
-    mVertexBuffer.Bind(context);
-    mIndexBuffer.Bind(context);
+    mMesh.Bind(context);
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 
@@ -128,7 +121,7 @@ void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& wor
     ojc.world = world.Transposed();
     
     if(!mObjectConstantBuffer.Update(context, ojc)) return;
-    mObjectConstantBuffer.BindVS(context, 0); // connecting to vs b0
+    mObjectConstantBuffer.BindVS(context, 0); // connecting to b0 in VS
 
 
     LightConstant light {};
@@ -140,15 +133,17 @@ void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& wor
     light.padding           = 0.0f;
 
     if(!mLightConstantBuffer.Update(context, light)) return;
-    mLightConstantBuffer.BindPS(context, 1);
+    mLightConstantBuffer.BindPS(context, 1); // connecting to b1 in PS
+
 
     context->VSSetShader(mVertexShader.Get(), nullptr, 0);
 
-    mTexture.BindPS(context, 0);
+    if(!mMaterial.BindPS(context)) return;
+    
     ID3D11SamplerState* sampler = mSamplerState.Get();
     context->PSSetSamplers(0, 1, &sampler);
 
     context->PSSetShader(mPixelShader.Get(), nullptr, 0);
 
-    context->DrawIndexed(mIndexBuffer.Count(), 0, 0);
+    mMesh.Draw(context);
 }
