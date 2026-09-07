@@ -58,26 +58,14 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
 {
     ID3D11Device* device = graphicsDevice.Device();
 
-    Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob;
-    if(!ShaderCompiler::CompileFromFile(L"Shaders/Triangle.hlsl", "VSMain", "vs_5_0", vertexShaderBlob))
-        return false;
-
-    Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob;
-    if(!ShaderCompiler::CompileFromFile(L"Shaders/Triangle.hlsl", "PSMain", "ps_5_0", pixelShaderBlob))
-        return false;
-
-    HR_CHECK(device->CreateVertexShader(vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), nullptr, &mVertexShader));
-
-    HR_CHECK(device->CreatePixelShader(pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize(), nullptr, &mPixelShader));
-
     const D3D11_INPUT_ELEMENT_DESC inputElements[] = {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, uv), D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
-    HR_CHECK(device->CreateInputLayout(inputElements, ARRAYSIZE(inputElements), vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), &mInputLayout));
-
+    if(!mShader.Create(graphicsDevice, L"Shaders/Triangle.hlsl", inputElements, ARRAYSIZE(inputElements)))
+        return false;
 
     if(!mMesh.Create(graphicsDevice, kVertices, ARRAYSIZE(kVertices), kIndices, ARRAYSIZE(kIndices))) 
         return false;
@@ -88,21 +76,8 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
     if(!mLightConstantBuffer.Create(graphicsDevice))
         return false;
 
-    if(!mMaterial.Create(graphicsDevice, "../../../../../Assets/Textures/uv_checker_256.png"))
+    if(!mMaterial.Create(graphicsDevice, mShader, "../../../../../Assets/Textures/uv_checker_256.png"))
         return false;
-
-
-    D3D11_SAMPLER_DESC desc{};
-    desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    desc.MaxAnisotropy = 1;
-    desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-    desc.MinLOD = 0.0f;
-    desc.MaxLOD = D3D11_FLOAT32_MAX;
-
-    HR_CHECK(device->CreateSamplerState(&desc, mSamplerState.GetAddressOf()));
 
     Core::LogInfo("Triangle renderer created.");
     
@@ -111,18 +86,14 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
 
 void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& world, const Matrix4x4& wvp, const Vector3& camera)
 {
-    context->IASetInputLayout(mInputLayout.Get());
     mMesh.Bind(context);
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
 
     ObjectConstant ojc{};
     ojc.wvp = wvp.Transposed();
     ojc.world = world.Transposed();
-    
     if(!mObjectConstantBuffer.Update(context, ojc)) return;
     mObjectConstantBuffer.BindVS(context, 0); // connecting to b0 in VS
-
 
     LightConstant light {};
     light.lightDirection    = { 1.0f, -1.0f, 1.0f}; // direction from light source to surface 
@@ -131,19 +102,13 @@ void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& wor
     light.ambientIntensity  = 0.1f;
     light.cameraPosition    = camera;
     light.padding           = 0.0f;
-
     if(!mLightConstantBuffer.Update(context, light)) return;
     mLightConstantBuffer.BindPS(context, 1); // connecting to b1 in PS
-
-
-    context->VSSetShader(mVertexShader.Get(), nullptr, 0);
-
-    if(!mMaterial.BindPS(context)) return;
     
-    ID3D11SamplerState* sampler = mSamplerState.Get();
-    context->PSSetSamplers(0, 1, &sampler);
-
-    context->PSSetShader(mPixelShader.Get(), nullptr, 0);
+    // connecting <MaterialConstant> to b2 in PS
+    // connecting <DiffuseTexture> to t0 in PS 
+    // connecting <LinearSampler> to s0 in PS 
+    if(!mMaterial.BindPS(context)) return;  
 
     mMesh.Draw(context);
 }

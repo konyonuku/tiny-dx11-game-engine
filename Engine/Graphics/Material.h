@@ -2,13 +2,14 @@
 
 #include "Math/Vector.h"
 #include "Graphics/Buffer.h"
+#include "Graphics/Shader.h"
 #include "Graphics/Texture2D.h"
 
 
 class Material
 {
 public:
-    bool Create(GraphicsDevice& device, const char *diffuseTextPath);
+    bool Create(GraphicsDevice& device, Shader& shader, const char *diffuseTextPath);
     bool BindPS(ID3D11DeviceContext* context);
 private:
     struct MaterialConstant {
@@ -19,7 +20,10 @@ private:
     };
     static_assert(sizeof(MaterialConstant) == 32);
 
+    Shader* mShader = nullptr;
     Texture2D mDiffuseTexture;
     MaterialConstant mConstants;
     ConstantBuffer<MaterialConstant> mConstantBuffer;
+
+    ComPtr<ID3D11SamplerState> mSamplerState;
 };

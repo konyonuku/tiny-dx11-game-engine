@@ -4,6 +4,7 @@
 
 #include "Math/Matrix.h"
 #include "Graphics/Buffer.h"
+#include "Graphics/Shader.h"
 #include "Graphics/Mesh.h"
 #include "Graphics/Material.h"
 #include "Graphics/Texture2D.h"
@@ -38,7 +39,7 @@ private:
     ConstantBuffer<ObjectConstant>             mObjectConstantBuffer;
     ConstantBuffer<LightConstant>              mLightConstantBuffer;
 
+    Shader                                     mShader;
     Mesh                                       mMesh;
     Material                                   mMaterial;
-    Microsoft::WRL::ComPtr<ID3D11SamplerState> mSamplerState;    
 };
