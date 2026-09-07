@@ -40,11 +40,11 @@ bool Material::BindPS(ID3D11DeviceContext *context)
     if(!mConstantBuffer.Update(context, mConstants))
         return false;
 
-    mConstantBuffer.BindPS(context, 2);
-    mDiffuseTexture.BindPS(context, 0);
+    mConstantBuffer.BindPS(context, 2); //b2
+    mDiffuseTexture.BindPS(context, 0); //t0
 
     ID3D11SamplerState* sampler = mSamplerState.Get();
-    context->PSSetSamplers(0, 1, &sampler);
+    context->PSSetSamplers(0, 1, &sampler); //s0
 
 
     return true;

@@ -15,6 +15,7 @@ add_library(Engine STATIC
     Graphics/Mesh.h Graphics/Mesh.cpp
     Graphics/Material.h Graphics/Material.cpp
     Graphics/Shader.h Graphics/Shader.cpp
+    Graphics/RenderState.h Graphics/RenderState.cpp
 
     Library/stb_image.h
 )

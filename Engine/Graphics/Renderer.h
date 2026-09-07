@@ -1,6 +1,8 @@
 #pragma once
 #include <d3d11.h>
 
+#include "Graphics/RenderState.h"
+
 class GraphicsDevice;
 class SwapChain;
 
@@ -18,6 +20,7 @@ public:
 private:
     GraphicsDevice* mDevice    = nullptr;
     SwapChain*      mSwapChain = nullptr;
+    RenderState     mDefaultRenderState;
 
     float mClearColor[4] { 0.f, 0.f, 0.5f, 1.f };
 };
