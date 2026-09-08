@@ -61,10 +61,12 @@ float4 PSMain(VSOutput input) : SV_Target
     float4 textureColor = diffuseTexture.Sample(linearSampler, input.uv);
 
     float3 toCamera = normalize(cameraPosition - input.worldPosition);
-    float3 reflection = reflect(-toLight, normal);
+    // float3 reflection = reflect(-toLight, normal);
+    float3 halfVector = normalize(toLight + toCamera);
 
     float specularFactor = 0.0f;
-    if(diffuseFactor > 0.0f) specularFactor = pow(saturate(dot(toCamera, reflection)), specularPower);
+    // if(diffuseFactor > 0.0f) specularFactor = pow(saturate(dot(toCamera, reflection)), specularPower);
+    if(diffuseFactor > 0.0f) specularFactor = pow(saturate(dot(normal, halfVector)), specularPower);
      
 
     float3 diffuse = textureColor.rgb * diffuseColor * lightColor * diffuseFactor * lightIntensity;

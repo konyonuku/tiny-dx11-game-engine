@@ -3,8 +3,10 @@
 #include "Core/Application.h"
 #include "Core/GameTimer.h"
 #include "Math/Transform.h"
-#include "TriangleRenderer.h"
+#include "Math/MathUtils.h"
 #include "Graphics/Camera.h"
+
+#include "CubeRenderer.h"
 
 
 class SandboxApp : public Application
@@ -20,12 +22,18 @@ protected:
             {0.0f, 1.0f, 0.0f}
         );
         
-        constexpr float      pi = 3.1415926535f;
-        mCameraAngle = -pi / 2;
-        const float aspect = static_cast<float>(GetWindow().ClientWidth())/static_cast<float>(GetWindow().ClientHeight());
-        mCamera.SetPerspective(60.f*pi/180.f, aspect, 0.1f, 100.f);
-        
+        mCameraAngle = -PI / 2;
+        float fovY = ToRadian(60.0f);
+        mCamera.SetPerspective(fovY, 1.f, 0.1f, 100.f);
+        OnResize(GetWindow().ClientWidth(), GetWindow().ClientHeight());
+
         return true;
+    }
+
+    void OnResize(uint32_t width, uint32_t height) override
+    {
+        if(height == 0) return;
+        mCamera.SetAspect(static_cast<float>(width)/static_cast<float>(height));
     }
 
     void OnUpdate(float deltaTime) override

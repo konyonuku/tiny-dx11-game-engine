@@ -1,4 +1,4 @@
-#include "TriangleRenderer.h"
+#include "CubeRenderer.h"
 
 #include <cstddef>
 
@@ -64,7 +64,7 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, uv), D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
-    if(!mShader.Create(graphicsDevice, L"Shaders/Triangle.hlsl", inputElements, ARRAYSIZE(inputElements)))
+    if(!mShader.Create(graphicsDevice, L"Shaders/Default.hlsl", inputElements, ARRAYSIZE(inputElements)))
         return false;
 
     if(!mMesh.Create(graphicsDevice, kVertices, ARRAYSIZE(kVertices), kIndices, ARRAYSIZE(kIndices))) 
@@ -79,7 +79,7 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
     if(!mMaterial.Create(graphicsDevice, mShader, "../../../../../Assets/Textures/uv_checker_256.png"))
         return false;
 
-    Core::LogInfo("Triangle renderer created.");
+    Core::LogInfo("Default renderer created.");
     
     return true;
 }
@@ -98,8 +98,8 @@ void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& wor
     LightConstant light {};
     light.lightDirection    = { 1.0f, -1.0f, 1.0f}; // direction from light source to surface 
     light.lightColor        = { 1.0f,  1.0f,  1.0f};
-    light.lightIntensity    = 0.7f;
-    light.ambientIntensity  = 0.1f;
+    light.lightIntensity    = 1.0f;
+    light.ambientIntensity  = 0.05f;
     light.cameraPosition    = camera;
     light.padding           = 0.0f;
     if(!mLightConstantBuffer.Update(context, light)) return;
@@ -108,7 +108,7 @@ void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& wor
     // connecting <MaterialConstant> to b2 in PS
     // connecting <DiffuseTexture> to t0 in PS 
     // connecting <LinearSampler> to s0 in PS 
-    if(!mMaterial.BindPS(context)) return;  
+    if(!mMaterial.Bind(context)) return;  
 
     mMesh.Draw(context);
 }

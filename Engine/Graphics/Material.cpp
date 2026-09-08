@@ -30,7 +30,7 @@ bool Material::Create(GraphicsDevice &device, Shader& shader, const char *diffus
     return true;
 }
 
-bool Material::BindPS(ID3D11DeviceContext *context)
+bool Material::Bind(ID3D11DeviceContext *context)
 {
     if(mShader == nullptr)
         return false;

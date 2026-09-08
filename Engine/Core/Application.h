@@ -27,6 +27,7 @@ protected:
     virtual bool OnStart() { return true; }
     virtual void OnUpdate(float deltaTime) {}
     virtual void OnRender(Renderer& renderer) {}
+    virtual void OnResize(uint32_t width, uint32_t height) {}
 
     GraphicsDevice&  Device()      { return mDevice; }
     Renderer&        GetRenderer() { return mRenderer; }

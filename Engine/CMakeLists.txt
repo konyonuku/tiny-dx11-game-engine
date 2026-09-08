@@ -8,7 +8,7 @@ add_library(Engine STATIC
     Graphics/Renderer.h Graphics/Renderer.cpp
     Graphics/ShaderCompiler.h Graphics/ShaderCompiler.cpp
 
-    Math/Vector.h Math/Matrix.h Math/Transform.h
+    Math/Vector.h Math/Matrix.h Math/Transform.h Math/MathUtils.h
     Graphics/Buffer.h Graphics/Buffer.cpp
     Graphics/Camera.h Graphics/Camera.cpp
     Graphics/Texture2D.h Graphics/Texture2D.cpp

@@ -10,12 +10,12 @@ class Material
 {
 public:
     bool Create(GraphicsDevice& device, Shader& shader, const char *diffuseTextPath);
-    bool BindPS(ID3D11DeviceContext* context);
+    bool Bind(ID3D11DeviceContext* context);
 private:
     struct MaterialConstant {
-        Vector3 diffuseColor {1.0f, 1.0f, 1.0f};
-        float specularPower = 32.0f;
-        Vector3 specularColor {0.25f, 0.25f, 0.25f};
+        Vector3 diffuseColor {0.6f, 0.6f, 0.6f};
+        float specularPower = 64.0f;
+        Vector3 specularColor {1.0f, 1.0f, 1.0f};
         float padding = 0.0f;
     };
     static_assert(sizeof(MaterialConstant) == 32);

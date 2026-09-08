@@ -16,9 +16,6 @@ public:
     void Render(ID3D11DeviceContext* context, const Matrix4x4& world, const Matrix4x4& wvp, const Vector3& camera);
 
 private:
-    Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader;
-    Microsoft::WRL::ComPtr<ID3D11PixelShader>  mPixelShader;
-    Microsoft::WRL::ComPtr<ID3D11InputLayout>  mInputLayout;
     struct ObjectConstant
     {
         Matrix4x4 wvp;

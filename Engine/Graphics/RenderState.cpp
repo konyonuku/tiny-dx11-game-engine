@@ -6,8 +6,8 @@
 bool RenderState::Create(GraphicsDevice& device)
 {
     D3D11_RASTERIZER_DESC rasterDesc{};
-    // rasterDesc.FillMode = D3D11_FILL_SOLID;
-    rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+    rasterDesc.FillMode = D3D11_FILL_SOLID;
+    // rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
     rasterDesc.CullMode = D3D11_CULL_BACK;
     rasterDesc.FrontCounterClockwise = FALSE;
     rasterDesc.DepthClipEnable = TRUE;

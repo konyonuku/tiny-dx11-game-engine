@@ -33,7 +33,11 @@ bool Application::Initialize(const Desc& desc)
         return false;
     if (!mRenderer.Create(mDevice, mSwapChain)) return false;
 
-    mWindow.OnResize = [this](uint32_t w, uint32_t h) { mSwapChain.Resize(w, h); };
+    mWindow.OnResize = [this](uint32_t w, uint32_t h) {
+        mSwapChain.Resize(w, h); 
+        OnResize(w, h);
+    };
+    
     return true;
 }
 
