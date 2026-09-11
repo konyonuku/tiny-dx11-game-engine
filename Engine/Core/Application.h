@@ -28,6 +28,8 @@ protected:
     virtual void OnUpdate(float deltaTime) {}
     virtual void OnRender(Renderer& renderer) {}
     virtual void OnResize(uint32_t width, uint32_t height) {}
+    virtual void OnKeyEvent(uint32_t key, bool isDown) {}
+    virtual void OnKillFocus() {}
 
     GraphicsDevice&  Device()      { return mDevice; }
     Renderer&        GetRenderer() { return mRenderer; }

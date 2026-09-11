@@ -38,6 +38,14 @@ bool Application::Initialize(const Desc& desc)
         OnResize(w, h);
     };
     
+    mWindow.OnKeyEvent = [this](uint32_t key, bool isDown) {
+        OnKeyEvent(key, isDown);
+    };
+
+    mWindow.OnKillFocus = [this]() {
+        OnKillFocus();
+    };
+
     return true;
 }
 

@@ -9,7 +9,8 @@
 #include "Graphics/Material.h"
 #include "Graphics/Texture2D.h"
 
-class TriangleRenderer
+
+class CubeRenderer
 {
 public:
     bool Create(GraphicsDevice& device);

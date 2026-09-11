@@ -42,6 +42,18 @@ LRESULT Window::MsgProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
         reinterpret_cast<MINMAXINFO*>(lp)->ptMinTrackSize = { 200, 150 };
         return 0;
 
+    case WM_KEYDOWN:
+        if(OnKeyEvent) OnKeyEvent((uint32_t)wp, true);
+        break;
+
+    case WM_KEYUP:
+        if(OnKeyEvent) OnKeyEvent((uint32_t)wp, false);
+        break;
+
+    case WM_KILLFOCUS:
+        if(OnKillFocus) OnKillFocus();
+        break;
+
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
@@ -55,6 +67,8 @@ void Window::NotifyResize()
     if (OnResize && mClientWidth > 0 && mClientHeight > 0)
         OnResize(mClientWidth, mClientHeight);
 }
+
+
 
 bool Window::Create(HINSTANCE hInstance, const Desc& desc)
 {

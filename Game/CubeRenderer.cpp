@@ -54,7 +54,7 @@ namespace
     };
 }
 
-bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
+bool CubeRenderer::Create(GraphicsDevice& graphicsDevice)
 {
     ID3D11Device* device = graphicsDevice.Device();
 
@@ -84,7 +84,7 @@ bool TriangleRenderer::Create(GraphicsDevice& graphicsDevice)
     return true;
 }
 
-void TriangleRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& world, const Matrix4x4& wvp, const Vector3& camera)
+void CubeRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& world, const Matrix4x4& wvp, const Vector3& camera)
 {
     mMesh.Bind(context);
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

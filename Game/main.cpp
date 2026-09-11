@@ -1,12 +1,11 @@
-#include <cmath>
+#include <cstddef>
 
 #include "Core/Application.h"
-#include "Core/GameTimer.h"
 #include "Math/Transform.h"
 #include "Math/MathUtils.h"
 #include "Graphics/Camera.h"
 
-#include "CubeRenderer.h"
+#include "World.h"
 
 
 class SandboxApp : public Application
@@ -14,18 +13,32 @@ class SandboxApp : public Application
 protected:
     bool OnStart() override
     {
-        if(!mTriangle.Create(Device())) return false;
+        if(!mWorld.Initialize(Device())) return false;
+
 
         mCamera.SetLookAt(
-            {0.0f, 0.0f, -3.0f},
+            {0.0f, 0.0f, -4.0f},
             {0.0f, 0.0f, 0.0f},
             {0.0f, 1.0f, 0.0f}
         );
         
-        mCameraAngle = -PI / 2;
         float fovY = ToRadian(60.0f);
         mCamera.SetPerspective(fovY, 1.f, 0.1f, 100.f);
         OnResize(GetWindow().ClientWidth(), GetWindow().ClientHeight());
+
+
+        Transform firstCubeTransform;
+        mWorld.CreateCube(firstCubeTransform, {0, 0, 0}, false);
+
+        Transform secondCubeTransform;
+        secondCubeTransform.position = {-2.0f, 0.0f, 1.0f};
+        mWorld.CreateCube(secondCubeTransform, {2.0f, 0.0f, 0.0f}, false);
+
+        Transform thirdCubeTransform;
+        thirdCubeTransform.position = {2.0f, -1.0f, 0.0f};
+        thirdCubeTransform.scale = thirdCubeTransform.scale * 0.5f;
+        mWorld.CreateCube(thirdCubeTransform, {0.0f, 3.0f, 0.0f}, true);
+
 
         return true;
     }
@@ -38,13 +51,15 @@ protected:
 
     void OnUpdate(float deltaTime) override
     {
-        mElapsedTime += deltaTime;
-        if(mElapsedTime < mDelay) return;
+        mWorld.Update(deltaTime);
+        
+        if(mUpDown) mWorld.MoveSelectedCube({0,0,1}, deltaTime);
+        if(mLeftDown) mWorld.MoveSelectedCube({-1,0,0}, deltaTime);
+        if(mDownDown) mWorld.MoveSelectedCube({0,0,-1}, deltaTime);
+        if(mRightDown) mWorld.MoveSelectedCube({1,0,0}, deltaTime);
 
-        mTransform.rotation.x += mRotationSpeed*0.5f * deltaTime;
-        mTransform.rotation.y += mRotationSpeed * deltaTime;
-        // mTransform.rotation.z += mRotationSpeed * deltaTime;
 
+        // Orbit Camera
         // mCameraAngle += mCameraSpeed * deltaTime;
         // Vector3 eye {std::cos(mCameraAngle) * mCameraRadius, 0.f, std::sin(mCameraAngle) * mCameraRadius};
         // mCamera.SetLookAt(
@@ -56,26 +71,59 @@ protected:
 
     void OnRender(Renderer& renderer) override
     {
-        const Matrix4x4 world = mTransform.WorldMatrix();
-        const Matrix4x4 view = mCamera.ViewMatrix();
-        const Matrix4x4 projection = mCamera.ProjectionMatrix();
-        const Matrix4x4 wvp = world * view * projection;
+        mWorld.Render(renderer, mCamera);
+    }
 
-        mTriangle.Render(renderer.Context(), world, wvp, mCamera.Position());
+    void OnKeyEvent(uint32_t key, bool isDown) override
+    {
+        switch(key) {
+            case VK_LEFT:  mLeftDown  = isDown; return;
+            case VK_RIGHT: mRightDown = isDown; return;
+            case VK_UP:    mUpDown    = isDown; return;
+            case VK_DOWN:  mDownDown  = isDown; return;
+        }
+
+        if(!isDown) {
+            switch(key) {
+                case 'R':
+                    ClearInput();
+                    mWorld.Reset();
+                    return;
+                case VK_SPACE:
+                    mWorld.ToggleSelectedCubeRotation();
+                    return;
+                case '1':
+                case '2':
+                case '3':
+                    mWorld.SelectCube(static_cast<std::size_t>(key - '1'));
+                    return;
+            }
+        }
+    }
+
+    void OnKillFocus() override
+    {
+        ClearInput();
     }
 
 private:
-    TriangleRenderer mTriangle;
-    Transform        mTransform;
-    float            mRotationSpeed = 2.0f;
-    float            mDelay = 1.f;
-    float            mElapsedTime = 0.f;
+    void ClearInput()
+    {
+        mLeftDown = false;
+        mRightDown = false;
+        mUpDown = false;
+        mDownDown = false;
+    }
 
+    World            mWorld;
     Camera           mCamera;
-    float            mCameraAngle = 0;
-    float            mCameraRadius = 3.f;
-    float            mCameraSpeed = 2.5f;
+
+    bool mLeftDown  = false;
+    bool mRightDown = false;
+    bool mUpDown    = false;
+    bool mDownDown  = false;
 };
+
 
 int main()
 {

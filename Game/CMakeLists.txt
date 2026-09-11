@@ -1,6 +1,8 @@
 add_executable(Game
     main.cpp
+    Cube.h Cube.cpp
     CubeRenderer.h CubeRenderer.cpp
+    World.h World.cpp
 )
 
 target_include_directories(Game PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

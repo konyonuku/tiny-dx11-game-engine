@@ -25,6 +25,8 @@ public:
     bool     IsMinimized()  const { return mMinimized; }
 
     std::function<void(uint32_t, uint32_t)> OnResize;
+    std::function<void(uint32_t key, bool isDown)> OnKeyEvent;
+    std::function<void()> OnKillFocus;
 
 private:
     static LRESULT CALLBACK WndProcThunk(HWND, UINT, WPARAM, LPARAM);
