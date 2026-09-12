@@ -3,6 +3,7 @@ add_library(Engine STATIC
     Core/GameTimer.h Core/GameTimer.cpp
     Core/Application.h Core/Application.cpp
     Platform/Window.h Platform/Window.cpp
+    Platform/InputState.h Platform/InputState.cpp
     Graphics/GraphicsDevice.h Graphics/GraphicsDevice.cpp
     Graphics/SwapChain.h Graphics/SwapChain.cpp
     Graphics/Renderer.h Graphics/Renderer.cpp

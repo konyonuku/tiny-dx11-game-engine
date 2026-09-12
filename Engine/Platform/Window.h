@@ -4,6 +4,9 @@
 #include <cstdint>
 #include <functional>
 
+#include "InputState.h"
+
+
 class Window
 {
 public:
@@ -25,7 +28,7 @@ public:
     bool     IsMinimized()  const { return mMinimized; }
 
     std::function<void(uint32_t, uint32_t)> OnResize;
-    std::function<void(uint32_t key, bool isDown)> OnKeyEvent;
+    std::function<void(Key key, bool isDown)> OnKeyEvent;
     std::function<void()> OnKillFocus;
 
 private:

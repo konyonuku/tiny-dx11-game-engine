@@ -5,6 +5,20 @@
 namespace
 {
     const wchar_t* kClassName = L"DX11Window";
+    Key TranslateKey(WPARAM vk) {
+        switch(vk) {
+            case VK_LEFT:   return Key::Left;
+            case VK_RIGHT:  return Key::Right;
+            case VK_UP:     return Key::Up;
+            case VK_DOWN:   return Key::Down;
+            case VK_SPACE:  return Key::Space;
+            case '1':       return Key::Num1;
+            case '2':       return Key::Num2;
+            case '3':       return Key::Num3;
+            case 'R':       return Key::R;
+            default:        return Key::Unknown;
+        }
+    }
 }
 
 LRESULT CALLBACK Window::WndProcThunk(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
@@ -43,11 +57,11 @@ LRESULT Window::MsgProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
         return 0;
 
     case WM_KEYDOWN:
-        if(OnKeyEvent) OnKeyEvent((uint32_t)wp, true);
+        if(OnKeyEvent) OnKeyEvent(TranslateKey(wp), true);
         break;
 
     case WM_KEYUP:
-        if(OnKeyEvent) OnKeyEvent((uint32_t)wp, false);
+        if(OnKeyEvent) OnKeyEvent(TranslateKey(wp), false);
         break;
 
     case WM_KILLFOCUS:

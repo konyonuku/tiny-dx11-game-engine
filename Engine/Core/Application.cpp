@@ -38,12 +38,12 @@ bool Application::Initialize(const Desc& desc)
         OnResize(w, h);
     };
     
-    mWindow.OnKeyEvent = [this](uint32_t key, bool isDown) {
-        OnKeyEvent(key, isDown);
+    mWindow.OnKeyEvent = [this](Key key, bool isDown) {
+        isDown ? mInput.OnKeyDown(key) : mInput.OnKeyUp(key);
     };
 
     mWindow.OnKillFocus = [this]() {
-        OnKillFocus();
+        mInput.OnFocusLost();
     };
 
     return true;
@@ -51,20 +51,23 @@ bool Application::Initialize(const Desc& desc)
 
 void Application::MainLoop()
 {
+    
     while (mWindow.PumpMessages()) {
         mTimer.Tick();
         UpdateFrameStats();
-
+        
         if (mWindow.IsMinimized()) {
             Sleep(16);
             continue;
         }
-
+        
         OnUpdate(mTimer.DeltaTime());
-
+        
         mRenderer.BeginFrame();
         OnRender(mRenderer);
         mRenderer.EndFrame(mVsync);
+        
+        mInput.BeginFrame();
     }
 }
 

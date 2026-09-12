@@ -7,6 +7,7 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/SwapChain.h"
 #include "Platform/Window.h"
+#include "Platform/InputState.h"
 
 class Application
 {
@@ -28,13 +29,12 @@ protected:
     virtual void OnUpdate(float deltaTime) {}
     virtual void OnRender(Renderer& renderer) {}
     virtual void OnResize(uint32_t width, uint32_t height) {}
-    virtual void OnKeyEvent(uint32_t key, bool isDown) {}
-    virtual void OnKillFocus() {}
 
     GraphicsDevice&  Device()      { return mDevice; }
     Renderer&        GetRenderer() { return mRenderer; }
     Window&          GetWindow()   { return mWindow; }
     const GameTimer& Timer() const { return mTimer; }
+    const InputState& Input() const { return mInput; }
 
 private:
     bool Initialize(const Desc& desc);
@@ -46,6 +46,7 @@ private:
     SwapChain      mSwapChain;
     Renderer       mRenderer;
     GameTimer      mTimer;
+    InputState     mInput;
 
     std::wstring mTitle;
     bool         mVsync        = true;

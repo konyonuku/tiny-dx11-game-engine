@@ -51,13 +51,20 @@ protected:
 
     void OnUpdate(float deltaTime) override
     {
+        const InputState& in = Input();
+
         mWorld.Update(deltaTime);
         
-        if(mUpDown) mWorld.MoveSelectedCube({0,0,1}, deltaTime);
-        if(mLeftDown) mWorld.MoveSelectedCube({-1,0,0}, deltaTime);
-        if(mDownDown) mWorld.MoveSelectedCube({0,0,-1}, deltaTime);
-        if(mRightDown) mWorld.MoveSelectedCube({1,0,0}, deltaTime);
+        if(in.IsDown(Key::Up)) mWorld.MoveSelectedCube({0,0,1}, deltaTime);
+        if(in.IsDown(Key::Left)) mWorld.MoveSelectedCube({-1,0,0}, deltaTime);
+        if(in.IsDown(Key::Down)) mWorld.MoveSelectedCube({0,0,-1}, deltaTime);
+        if(in.IsDown(Key::Right)) mWorld.MoveSelectedCube({1,0,0}, deltaTime);
 
+        if(in.WasPressed(Key::R)) mWorld.Reset();
+        if(in.WasPressed(Key::Space)) mWorld.ToggleSelectedCubeRotation();
+        if(in.WasPressed(Key::Num1)) mWorld.SelectCube(0);
+        if(in.WasPressed(Key::Num2)) mWorld.SelectCube(1);
+        if(in.WasPressed(Key::Num3)) mWorld.SelectCube(2);
 
         // Orbit Camera
         // mCameraAngle += mCameraSpeed * deltaTime;
@@ -74,54 +81,9 @@ protected:
         mWorld.Render(renderer, mCamera);
     }
 
-    void OnKeyEvent(uint32_t key, bool isDown) override
-    {
-        switch(key) {
-            case VK_LEFT:  mLeftDown  = isDown; return;
-            case VK_RIGHT: mRightDown = isDown; return;
-            case VK_UP:    mUpDown    = isDown; return;
-            case VK_DOWN:  mDownDown  = isDown; return;
-        }
-
-        if(!isDown) {
-            switch(key) {
-                case 'R':
-                    ClearInput();
-                    mWorld.Reset();
-                    return;
-                case VK_SPACE:
-                    mWorld.ToggleSelectedCubeRotation();
-                    return;
-                case '1':
-                case '2':
-                case '3':
-                    mWorld.SelectCube(static_cast<std::size_t>(key - '1'));
-                    return;
-            }
-        }
-    }
-
-    void OnKillFocus() override
-    {
-        ClearInput();
-    }
-
 private:
-    void ClearInput()
-    {
-        mLeftDown = false;
-        mRightDown = false;
-        mUpDown = false;
-        mDownDown = false;
-    }
-
     World            mWorld;
     Camera           mCamera;
-
-    bool mLeftDown  = false;
-    bool mRightDown = false;
-    bool mUpDown    = false;
-    bool mDownDown  = false;
 };
 
 
