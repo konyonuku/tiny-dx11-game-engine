@@ -82,6 +82,11 @@ std::size_t World::GetActorCount() const
     return count;
 }
 
+void World::Render(Renderer &renderer) const
+{
+    //
+}
+
 void World::FlushDestroyedActors()
 {
     while(true) {

@@ -2,9 +2,12 @@
 #include <d3d11.h>
 
 #include "Graphics/RenderState.h"
+#include "Graphics/RenderTypes.h"
+#include "Graphics/Buffer.h"
 
 class GraphicsDevice;
 class SwapChain;
+
 
 class Renderer
 {
@@ -21,6 +24,8 @@ private:
     GraphicsDevice* mDevice    = nullptr;
     SwapChain*      mSwapChain = nullptr;
     RenderState     mDefaultRenderState;
-
+    ConstantBuffer<FrameConstants>      mFrameConstantBuffer;
+    ConstantBuffer<ObjectConstants>     mObjectConstantBuffer;
+    
     float mClearColor[4] { 0.f, 0.f, 0.5f, 1.f };
 };

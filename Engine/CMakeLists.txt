@@ -17,10 +17,12 @@ add_library(Engine STATIC
     Graphics/Material.h Graphics/Material.cpp
     Graphics/Shader.h Graphics/Shader.cpp
     Graphics/RenderState.h Graphics/RenderState.cpp
+    Graphics/RenderTypes.h
 
     GameFramework/World.h GameFramework/World.cpp
     GameFramework/Actor.h GameFramework/Actor.cpp
     GameFramework/ActorComponent.h GameFramework/ActorComponent.cpp
+    GameFramework/StaticMeshComponent.h GameFramework/StaticMeshComponent.cpp
 
     ${PROJECT_SOURCE_DIR}/External/stb_image.h
 )

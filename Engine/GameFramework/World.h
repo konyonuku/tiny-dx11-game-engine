@@ -1,5 +1,4 @@
 #pragma once
-
 #include <cstddef>
 #include <memory>
 #include <type_traits>
@@ -7,6 +6,7 @@
 #include <vector>
 
 #include "GameFramework/Actor.h"
+#include "Graphics/Renderer.h"
 
 
 class World
@@ -21,6 +21,7 @@ public:
     void Tick(float deltaTime);
     void Clear();
     std::size_t GetActorCount() const;
+    void Render(Renderer& renderer) const;
 
 private:
     void FlushDestroyedActors();
