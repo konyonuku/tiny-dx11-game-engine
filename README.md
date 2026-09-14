@@ -1,6 +1,6 @@
 # tiny-dx11-game-engine
 
-A small 3D game engine built with C++ and Direct3D 11, developed for a 3D Sokoban Demo.
+A small 3D game engine built with C++ and DirectX 11, developed for a 3D Sokoban Demo.
 
 <br>
 
@@ -8,10 +8,10 @@ A small 3D game engine built with C++ and Direct3D 11, developed for a 3D Sokoba
 
 | # | Goal | Main Tasks | Status | Note |
 |---|---|---|---|---|
-| **Week 1** | 3D Rendering Foundation | Extend DX11 bootstrap, custom Vector/Matrix, Index Buffer, Constant Buffer, Transform, 3D Cube, Camera | Done | (8.16~8.30) |
-| **Week 2** | Basic 3D Renderer | Texture/Sampler, Mesh/Material, Directional Light, Blinn-Phong, minimal OBJ loader |  |  |
-| **Week 3** | Engine Architecture | GameObject/Component, Scene, ResourceManager, Input, ImGui, Tween |  |  |
-| **Week 4** | Playable 3D Sokoban | SokobanBoard, stage loading, 3D board representation, movement, box pushing, clear condition |  |  |
-| **Week 5** | Undo & Ghost Replay | MoveHistory, Undo, history branching, ReplayPlayer, Ghost Replay |  |  |
-| **Week 6** | Polish & Portfolio | Multiple stages, bug fixing, UI polish, documentation, demo video |  |  |
+| **Week 1** | DX11 Rendering Foundation | DX11 bootstrap, engine structure, custom Vector/Matrix, vertex/index/constant buffers, Transform, Camera, depth buffer | **Done** | colored 3D cube rendering<br>(8.14 ~ 8.30) |
+| **Week 2** | Basic 3D Renderer | Texture/Sampler, diffuse, Blinn–Phong lighting, Mesh/Material/Shader abstractions, rasterizer/depth-stencil state, window resize handling | **Done** | multi-cube demo<br>(9.1 ~ 9.11) |
+| **Week 3** | Gameplay Architecture & Asset Pipeline | Frame-based InputState, World/Actor/ActorComponent lifecycle, StaticMeshComponent, shared frame/object render data, ResourceManager, tinyobjloader, ImGui debug panel, first PlayerController/Pawn | **In Progress** |  |
+| **Week 4** | Playable 3D Sokoban | SokobanBoard, text stage loading, board-to-world representation, player/box Actors, movement/pushing rules, collision blocking, clear condition, restart, movement interpolation |  |  |
+| **Week 5** | Undo & Persistent Ghost Replay | MoveHistory, Undo with history branching, ReplayRecorder, versioned replay file I/O, frame-rate-independent ReplayPlayer, transparent GhostActor, opaque/transparent render passes |  |  |
+| **Week 6** | Polish & Portfolio | Multiple stages, stage selection, regression testing, resize/minimize/focus handling, UI polish, Refactoring |  |  |
 
