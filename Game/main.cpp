@@ -5,7 +5,7 @@
 #include "Math/MathUtils.h"
 #include "Graphics/Camera.h"
 
-#include "World.h"
+#include "DemoWorld.h"
 
 
 class SandboxApp : public Application
@@ -82,7 +82,7 @@ protected:
     }
 
 private:
-    World            mWorld;
+    DemoWorld            mWorld;
     Camera           mCamera;
 };
 

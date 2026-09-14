@@ -18,10 +18,15 @@ add_library(Engine STATIC
     Graphics/Shader.h Graphics/Shader.cpp
     Graphics/RenderState.h Graphics/RenderState.cpp
 
-    Library/stb_image.h
+    GameFramework/World.h GameFramework/World.cpp
+    GameFramework/Actor.h GameFramework/Actor.cpp
+    GameFramework/ActorComponent.h GameFramework/ActorComponent.cpp
+
+    ${PROJECT_SOURCE_DIR}/External/stb_image.h
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(Engine PRIVATE ${PROJECT_SOURCE_DIR}/External)
 
 target_link_libraries(Engine PUBLIC
     d3d11

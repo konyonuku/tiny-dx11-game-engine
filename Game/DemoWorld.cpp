@@ -1,4 +1,4 @@
-#include "World.h"
+#include "DemoWorld.h"
 
 #include "Core/Log.h"
 
@@ -7,14 +7,14 @@ namespace
     constexpr float kSelectedScaleMultiplier = 1.2f;
 }
 
-bool World::Initialize(GraphicsDevice& device)
+bool DemoWorld::Initialize(GraphicsDevice& device)
 {
     if(!mCubeRenderer.Create(device)) return false;
     Core::LogInfo("World Initialized.");
     return true;
 }
 
-void World::CreateCube(const Transform& transform, const Vector3& rotationSpeed, bool isRotating)
+void DemoWorld::CreateCube(const Transform& transform, const Vector3& rotationSpeed, bool isRotating)
 {
     Cube cube;
     cube.SetTransform(transform);
@@ -29,7 +29,7 @@ void World::CreateCube(const Transform& transform, const Vector3& rotationSpeed,
     }
 }
 
-bool World::SelectCube(std::size_t index)
+bool DemoWorld::SelectCube(std::size_t index)
 {
     if(index >= mCubeList.size()) return false;
 
@@ -37,26 +37,26 @@ bool World::SelectCube(std::size_t index)
     return true;
 }
 
-void World::MoveSelectedCube(const Vector3& direction, float deltaTime)
+void DemoWorld::MoveSelectedCube(const Vector3& direction, float deltaTime)
 {
     if(!mSelectedIndex.has_value() || *mSelectedIndex >= mCubeList.size()) return;
     mCubeList[*mSelectedIndex].Move(direction, deltaTime);
 }
 
-void World::ToggleSelectedCubeRotation()
+void DemoWorld::ToggleSelectedCubeRotation()
 {
     if(!mSelectedIndex.has_value() || *mSelectedIndex >= mCubeList.size()) return;
     mCubeList[*mSelectedIndex].ToggleRotation();
 }
 
-void World::Update(float deltaTime)
+void DemoWorld::Update(float deltaTime)
 {
     for(auto& c : mCubeList) 
         if(c.IsRotating()) 
             c.Rotate(deltaTime);
 }
 
-void World::Render(Renderer& renderer, const Camera& camera)
+void DemoWorld::Render(Renderer& renderer, const Camera& camera)
 {
     const Matrix4x4& view = camera.ViewMatrix();
     const Matrix4x4& projection = camera.ProjectionMatrix();
@@ -74,7 +74,7 @@ void World::Render(Renderer& renderer, const Camera& camera)
     }
 }
 
-void World::Reset()
+void DemoWorld::Reset()
 {
     mCubeList = mInitialCubeList;
     mSelectedIndex = mCubeList.empty() ? std::optional<std::size_t>{} : std::optional<std::size_t>{0};

@@ -1,6 +1,6 @@
 #include "Texture2D.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "Library/stb_image.h"
+#include "stb_image.h"
 #include "Graphics/GraphicsDevice.h"
 #include "Core/Log.h"
 

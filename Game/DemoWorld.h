@@ -14,7 +14,7 @@
 
 class GraphicsDevice;
 
-class World
+class DemoWorld
 {
 public:
     bool Initialize(GraphicsDevice& device);
