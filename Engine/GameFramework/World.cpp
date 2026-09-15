@@ -1,5 +1,9 @@
 #include "World.h"
 
+#include "Graphics/Renderer.h"
+#include "Graphics/RenderTypes.h"
+
+
 World::~World()
 {
     Clear();
@@ -82,9 +86,21 @@ std::size_t World::GetActorCount() const
     return count;
 }
 
-void World::Render(Renderer &renderer) const
+bool World::Render(Renderer& renderer) const
 {
-    //
+    if(mIsTicking || mIsClearing) return false;
+
+    std::vector<RenderItem> renderItems;
+    for(const auto& actor : mActors) {
+        actor->CollectRenderItems(renderItems);
+    }
+
+    for(const auto& item : renderItems) {
+        if(!item.mesh || !item.material) return false;
+        if(!renderer.DrawMesh(*item.mesh, *item.material, item.world)) return false;
+    }
+
+    return true;
 }
 
 void World::FlushDestroyedActors()

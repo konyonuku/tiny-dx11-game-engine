@@ -17,6 +17,10 @@ void ActorComponent::EndPlay()
 {
 }
 
+void ActorComponent::CollectRenderItems(std::vector<RenderItem> &items) const
+{
+}
+
 void ActorComponent::DispatchBeginPlay()
 {
     if(mHasBegunPlay || mHasEndedPlay) return; 
@@ -35,4 +39,10 @@ void ActorComponent::DispatchEndPlay()
     if(!mHasBegunPlay || mHasEndedPlay) return;
     mHasEndedPlay = true;
     EndPlay();
+}
+
+void ActorComponent::DispatchCollectRenderItems(std::vector<RenderItem> &items) const
+{
+    if(!mHasBegunPlay || mHasEndedPlay) return;
+    CollectRenderItems(items);
 }

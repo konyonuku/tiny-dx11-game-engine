@@ -72,3 +72,13 @@ void Actor::DispatchEndPlay()
     
     EndPlay();
 }
+
+void Actor::CollectRenderItems(std::vector<RenderItem> &items) const
+{
+    if(!mHasBegunPlay || mHasEndedPlay || mPendingDestroy) return;
+    
+    for(auto& component : mComponents) {
+        component->DispatchCollectRenderItems(items);
+
+    }
+}

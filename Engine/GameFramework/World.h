@@ -6,8 +6,9 @@
 #include <vector>
 
 #include "GameFramework/Actor.h"
-#include "Graphics/Renderer.h"
 
+
+class Renderer;
 
 class World
 {
@@ -21,7 +22,7 @@ public:
     void Tick(float deltaTime);
     void Clear();
     std::size_t GetActorCount() const;
-    void Render(Renderer& renderer) const;
+    bool Render(Renderer& renderer) const;
 
 private:
     void FlushDestroyedActors();

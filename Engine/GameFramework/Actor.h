@@ -33,6 +33,8 @@ private:
     void DispatchBeginPlay();
     void DispatchTick(float deltaTime);
     void DispatchEndPlay();
+    void CollectRenderItems(std::vector<RenderItem>& items) const;
+    
 
     World* mWorld = nullptr;
     Transform mTransform;
