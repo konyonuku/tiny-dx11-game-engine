@@ -1,19 +1,17 @@
 #include "Material.h"
 
+#include <utility>
+
 #include "Core/Log.h"
 
 
-bool Material::Create(GraphicsDevice &device, Shader& shader, const char *diffuseTextPath)
+bool Material::Create(GraphicsDevice &device, std::shared_ptr<Shader> shader, const char *diffuseTextPath)
 {
-    mShader = &shader;
+    if(!shader) return false;
+    if(!mDiffuseTexture.CreateFromFile(device, diffuseTextPath)) return false;
+    if(!mConstantBuffer.Create(device)) return false;
 
-    if(!mDiffuseTexture.CreateFromFile(device, diffuseTextPath))
-        return false;
-
-    if(!mConstantBuffer.Create(device))
-        return false;
-
-
+    mShader = std::move(shader);
     D3D11_SAMPLER_DESC desc{};
     desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -25,7 +23,6 @@ bool Material::Create(GraphicsDevice &device, Shader& shader, const char *diffus
     desc.MaxLOD = D3D11_FLOAT32_MAX;
 
     HR_CHECK(device.Device()->CreateSamplerState(&desc, mSamplerState.GetAddressOf()));
-
 
     return true;
 }

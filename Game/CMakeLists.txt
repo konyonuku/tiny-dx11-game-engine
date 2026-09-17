@@ -1,13 +1,17 @@
 add_executable(Game
     main.cpp
     Cube.h Cube.cpp
-    CubeRenderer.h CubeRenderer.cpp
     DemoWorld.h DemoWorld.cpp
+    DemoAssets.h DemoAssets.cpp
 )
 
 target_include_directories(Game PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(Game PRIVATE Engine)
+
+set_target_properties(Game PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:Game>"
+)
 
 add_custom_command(TARGET Game POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory

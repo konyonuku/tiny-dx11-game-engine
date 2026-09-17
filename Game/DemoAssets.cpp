@@ -1,20 +1,15 @@
-#include "CubeRenderer.h"
-
-#include <cstddef>
+#include "DemoAssets.h"
 
 #include "Core/Log.h"
 #include "Graphics/GraphicsDevice.h"
-#include "Graphics/ShaderCompiler.h"
+#include "Graphics/Material.h"
+#include "Graphics/Mesh.h"
+#include "Graphics/Shader.h"
+#include "Graphics/Vertex.h"
+
 
 namespace
 {
-    struct Vertex
-    {
-        float position[3];
-        float normal[3];
-        float uv[2];
-    };
-
     const Vertex kVertices[] = {
         { { -0.5f, +0.5f, -0.5f }, { 0.f, 0.f, -1.f }, {0.f, 0.f}}, //0 - front
         { { +0.5f, +0.5f, -0.5f }, { 0.f, 0.f, -1.f }, {1.f, 0.f}}, //1
@@ -54,61 +49,31 @@ namespace
     };
 }
 
-bool CubeRenderer::Create(GraphicsDevice& graphicsDevice)
+bool DemoAssets::Create(GraphicsDevice& graphicsDevice)
 {
-    ID3D11Device* device = graphicsDevice.Device();
-
     const D3D11_INPUT_ELEMENT_DESC inputElements[] = {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, uv), D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
-    if(!mShader.Create(graphicsDevice, L"Shaders/Default.hlsl", inputElements, ARRAYSIZE(inputElements)))
+    auto newShader = std::make_shared<Shader>();
+    auto newMesh = std::make_shared<Mesh>();
+    auto newMaterial = std::make_shared<Material>();
+
+    if(!newShader->Create(graphicsDevice, L"Shaders/Default.hlsl", inputElements, static_cast<uint32_t>(std::size(inputElements))))
         return false;
 
-    if(!mMesh.Create(graphicsDevice, kVertices, ARRAYSIZE(kVertices), kIndices, ARRAYSIZE(kIndices))) 
-        return false;
-    
-    if(!mObjectConstantBuffer.Create(graphicsDevice))
+    if(!newMesh->Create(graphicsDevice, kVertices, static_cast<uint32_t>(std::size(kVertices)), kIndices, static_cast<uint32_t>(std::size(kIndices))))
         return false;
 
-    if(!mLightConstantBuffer.Create(graphicsDevice))
+    if(!newMaterial->Create(graphicsDevice, newShader, "../../../../../Assets/Textures/uv_checker_256.png"))
         return false;
 
-    if(!mMaterial.Create(graphicsDevice, mShader, "../../../../../Assets/Textures/uv_checker_256.png"))
-        return false;
+    shader = std::move(newShader);
+    cubeMesh = std::move(newMesh);
+    material = std::move(newMaterial);
+    Core::LogInfo("Shared demo assets created.");
 
-    Core::LogInfo("Default renderer created.");
-    
     return true;
-}
-
-void CubeRenderer::Render(ID3D11DeviceContext* context, const Matrix4x4& world, const Matrix4x4& wvp, const Vector3& camera)
-{
-    mMesh.Bind(context);
-    context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-    ObjectConstant ojc{};
-    ojc.wvp = wvp.Transposed();
-    ojc.world = world.Transposed();
-    if(!mObjectConstantBuffer.Update(context, ojc)) return;
-    mObjectConstantBuffer.BindVS(context, 0); // connecting to b0 in VS
-
-    LightConstant light {};
-    light.lightDirection    = { 1.0f, -1.0f, 1.0f}; // direction from light source to surface 
-    light.lightColor        = { 1.0f,  1.0f,  1.0f};
-    light.lightIntensity    = 1.0f;
-    light.ambientIntensity  = 0.05f;
-    light.cameraPosition    = camera;
-    light.padding           = 0.0f;
-    if(!mLightConstantBuffer.Update(context, light)) return;
-    mLightConstantBuffer.BindPS(context, 1); // connecting to b1 in PS
-    
-    // connecting <MaterialConstant> to b2 in PS
-    // connecting <DiffuseTexture> to t0 in PS 
-    // connecting <LinearSampler> to s0 in PS 
-    if(!mMaterial.Bind(context)) return;  
-
-    mMesh.Draw(context);
 }

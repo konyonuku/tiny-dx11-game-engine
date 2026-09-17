@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Math/Transform.h"
+#include "GameFramework/Actor.h"
 #include "Math/Vector.h"
 
-class Cube
+class Cube : public Actor
 {
 public:
     void Move(const Vector3& direction, float deltaTime);
@@ -15,12 +15,13 @@ public:
     void SetIsRotating(bool isRotating);
     void SetMovementSpeed(float movementSpeed);
 
-    const Transform& GetTransform() const;
     bool IsRotating() const;
 
+protected:
+    void Tick(float deltaTime) override;
+
 private:
-    Transform mTransform;
-    Vector3   mRotationSpeed;
+    Vector3   mRotationSpeed {};
     bool      mIsRotating = false;
     float     mMovementSpeed = 2.0f; // World units per second
 };

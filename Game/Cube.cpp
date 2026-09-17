@@ -2,12 +2,14 @@
 
 void Cube::Move(const Vector3& direction, float deltaTime)
 {
-    mTransform.position = mTransform.position + (direction * mMovementSpeed * deltaTime);
+    auto& transform = GetTransform();
+    transform.position = transform.position + (direction * mMovementSpeed * deltaTime);
 }
 
 void Cube::Rotate(float deltaTime)
 {
-    mTransform.rotation = mTransform.rotation + (mRotationSpeed * deltaTime);
+    auto& transform = GetTransform();
+    transform.rotation = transform.rotation + (mRotationSpeed * deltaTime);
 }
 
 void Cube::ToggleRotation()
@@ -17,7 +19,7 @@ void Cube::ToggleRotation()
 
 void Cube::SetTransform(const Transform& transform)
 {
-    mTransform = transform;
+    GetTransform() = transform;
 }
 
 void Cube::SetRotationSpeed(const Vector3& rotationSpeed)
@@ -35,9 +37,9 @@ void Cube::SetMovementSpeed(float movementSpeed)
     mMovementSpeed = movementSpeed;
 }
 
-const Transform& Cube::GetTransform() const
+void Cube::Tick(float deltaTime)
 {
-    return mTransform;
+    if(mIsRotating) Rotate(deltaTime);
 }
 
 bool Cube::IsRotating() const

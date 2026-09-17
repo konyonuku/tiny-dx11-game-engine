@@ -18,6 +18,7 @@ add_library(Engine STATIC
     Graphics/Shader.h Graphics/Shader.cpp
     Graphics/RenderState.h Graphics/RenderState.cpp
     Graphics/RenderTypes.h
+    Graphics/Vertex.h
 
     GameFramework/World.h GameFramework/World.cpp
     GameFramework/Actor.h GameFramework/Actor.cpp

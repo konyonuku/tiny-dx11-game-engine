@@ -1,6 +1,7 @@
 #include <cstddef>
 
 #include "Core/Application.h"
+#include "Core/Log.h"
 #include "Math/Transform.h"
 #include "Math/MathUtils.h"
 #include "Graphics/Camera.h"
@@ -15,7 +16,6 @@ protected:
     {
         if(!mWorld.Initialize(Device())) return false;
 
-
         mCamera.SetLookAt(
             {0.0f, 0.0f, -4.0f},
             {0.0f, 0.0f, 0.0f},
@@ -26,19 +26,17 @@ protected:
         mCamera.SetPerspective(fovY, 1.f, 0.1f, 100.f);
         OnResize(GetWindow().ClientWidth(), GetWindow().ClientHeight());
 
-
         Transform firstCubeTransform;
-        mWorld.CreateCube(firstCubeTransform, {0, 0, 0}, false);
+        if(!mWorld.CreateCube(firstCubeTransform, {0, 0, 0}, false)) return false;
 
         Transform secondCubeTransform;
         secondCubeTransform.position = {-2.0f, 0.0f, 1.0f};
-        mWorld.CreateCube(secondCubeTransform, {2.0f, 0.0f, 0.0f}, false);
+        if(!mWorld.CreateCube(secondCubeTransform, {2.0f, 0.0f, 0.0f}, false)) return false;
 
         Transform thirdCubeTransform;
         thirdCubeTransform.position = {2.0f, -1.0f, 0.0f};
         thirdCubeTransform.scale = thirdCubeTransform.scale * 0.5f;
-        mWorld.CreateCube(thirdCubeTransform, {0.0f, 3.0f, 0.0f}, true);
-
+        if(!mWorld.CreateCube(thirdCubeTransform, {0.0f, 3.0f, 0.0f}, true)) return false;
 
         return true;
     }
@@ -78,12 +76,16 @@ protected:
 
     void OnRender(Renderer& renderer) override
     {
-        mWorld.Render(renderer, mCamera);
+        const bool rendered = mWorld.Render(renderer, mCamera);
+        if(!rendered && !mRenderFailureReported)
+            Core::LogError("Actor world rendering failed.");
+        mRenderFailureReported = !rendered;
     }
 
 private:
-    DemoWorld            mWorld;
+    DemoWorld        mWorld;
     Camera           mCamera;
+    bool             mRenderFailureReported = false;
 };
 
 

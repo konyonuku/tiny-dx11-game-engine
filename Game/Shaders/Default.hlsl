@@ -1,17 +1,17 @@
-cbuffer ObjectConstant : register(b0)
+cbuffer ObjectConstants : register(b0)
 {
     //column-major
-    float4x4 wvp; 
     float4x4 world;
 };
-cbuffer LightConstant : register(b1)
+cbuffer FrameConstants : register(b1)
 {
-    float3 lightDirection;
-    float  lightIntensity;
-    float3 lightColor;
-    float  ambientIntensity;
-    float3 cameraPosition;
-    float  padding;
+    float4x4    viewProjection;
+    float3      lightDirection;
+    float       lightIntensity;
+    float3      lightColor;
+    float       ambientIntensity;
+    float3      cameraPosition;
+    float       padding;
 };
 cbuffer MaterialConstant : register(b2)
 {
@@ -44,8 +44,10 @@ VSOutput VSMain(VSInput input)
     VSOutput output;
 
     float4 localPosition = float4(input.position, 1.0f);
-    output.worldPosition = mul(localPosition, world).xyz;
-    output.position = mul(localPosition, wvp);
+    float4 worldPosition = mul(localPosition, world);
+
+    output.position = mul(worldPosition, viewProjection);
+    output.worldPosition = worldPosition.xyz;
     output.normal = mul(input.normal, (float3x3)world);
     output.uv = input.uv;
 
