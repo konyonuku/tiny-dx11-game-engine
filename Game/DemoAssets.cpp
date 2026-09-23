@@ -5,7 +5,9 @@
 #include "Graphics/Material.h"
 #include "Graphics/Mesh.h"
 #include "Graphics/Shader.h"
+#include "Graphics/Texture2D.h"
 #include "Graphics/Vertex.h"
+#include "Resources/ResourceManager.h"
 
 
 namespace
@@ -49,28 +51,33 @@ namespace
     };
 }
 
-bool DemoAssets::Create(GraphicsDevice& graphicsDevice)
+bool DemoAssets::Create(GraphicsDevice& graphicsDevice, ResourceManager& resources)
 {
-    const D3D11_INPUT_ELEMENT_DESC inputElements[] = {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, uv), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
+    constexpr const char* kShaderKey = "Shaders/Default.hlsl";
+    constexpr const char* kTextureKey = "Textures/uv_checker_256.png";
+    constexpr const char* kCubeMeshKey = "Procedural/UnitCube";
 
-    auto newShader = std::make_shared<Shader>();
-    auto newMesh = std::make_shared<Mesh>();
+    std::shared_ptr<Shader> newShader = resources.LoadShaderPNUV(kShaderKey);
+    if(!newShader) return false;
+
+    std::shared_ptr<Texture2D> newTexture = resources.LoadTexture(kTextureKey);
+    if(!newTexture) return false;
+
+    // Procedural mesh: no file to load, so create once and register under a reserved key.
+    std::shared_ptr<Mesh> newMesh = resources.FindMesh(kCubeMeshKey);
+    if(!newMesh) {
+        newMesh = std::make_shared<Mesh>();
+        if(!newMesh->Create(graphicsDevice, kVertices, static_cast<uint32_t>(std::size(kVertices)), kIndices, static_cast<uint32_t>(std::size(kIndices))))
+            return false;
+        if(!resources.RegisterMesh(kCubeMeshKey, newMesh))
+            return false;
+    }
+
     auto newMaterial = std::make_shared<Material>();
-
-    if(!newShader->Create(graphicsDevice, L"Shaders/Default.hlsl", inputElements, static_cast<uint32_t>(std::size(inputElements))))
-        return false;
-
-    if(!newMesh->Create(graphicsDevice, kVertices, static_cast<uint32_t>(std::size(kVertices)), kIndices, static_cast<uint32_t>(std::size(kIndices))))
-        return false;
-
-    if(!newMaterial->Create(graphicsDevice, newShader, "../../../../../Assets/Textures/uv_checker_256.png"))
-        return false;
+    if(!newMaterial->Create(graphicsDevice, newShader, newTexture)) return false;
 
     shader = std::move(newShader);
+    diffuseTexture = std::move(newTexture);
     cubeMesh = std::move(newMesh);
     material = std::move(newMaterial);
     Core::LogInfo("Shared demo assets created.");

@@ -4,14 +4,17 @@
 class GraphicsDevice;
 class Mesh;
 class Shader;
+class Texture2D;
 class Material;
+class ResourceManager;
 
 
 struct DemoAssets
 {
-    bool Create(GraphicsDevice& device);
+    bool Create(GraphicsDevice& device, ResourceManager& resources);
 
     std::shared_ptr<Mesh> cubeMesh;
     std::shared_ptr<Shader> shader;
+    std::shared_ptr<Texture2D> diffuseTexture;
     std::shared_ptr<Material> material;
 };

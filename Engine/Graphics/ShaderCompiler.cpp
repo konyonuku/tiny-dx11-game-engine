@@ -3,18 +3,7 @@
 #include <d3dcompiler.h>
 
 #include "Core/Log.h"
-
-namespace
-{
-    std::filesystem::path ExecutableDir()
-    {
-        wchar_t modulePath[MAX_PATH] {};
-        const DWORD length = GetModuleFileNameW(nullptr, modulePath, ARRAYSIZE(modulePath));
-        if (length == 0 || length == ARRAYSIZE(modulePath)) return {};
-
-        return std::filesystem::path(modulePath).parent_path();
-    }
-}
+#include "Platform/Paths.h"
 
 namespace ShaderCompiler
 {
@@ -23,11 +12,8 @@ namespace ShaderCompiler
     {
         std::filesystem::path fullPath = path;
         if (fullPath.is_relative()) {
-            const std::filesystem::path baseDir = ExecutableDir();
-            if (baseDir.empty()) {
-                Core::LogError("Failed to resolve the executable path. err=%lu", GetLastError());
-                return false;
-            }
+            const std::filesystem::path baseDir = Platform::GetExecutableDirectory();
+            if (baseDir.empty()) return false;
             fullPath = baseDir / fullPath;
         }
 

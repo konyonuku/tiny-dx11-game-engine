@@ -5,6 +5,7 @@
 #include "Graphics/Camera.h"
 #include "Graphics/Renderer.h"
 #include "GameFramework/World.h"
+#include "Resources/ResourceManager.h"
 #include "Cube.h"
 #include "DemoAssets.h"
 
@@ -34,6 +35,7 @@ private:
 
     void ApplySelectionScale();
 
+    ResourceManager mResources;
     DemoAssets mAssets;
     World mActorWorld;
 

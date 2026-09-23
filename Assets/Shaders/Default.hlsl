@@ -77,5 +77,5 @@ float4 PSMain(VSOutput input) : SV_Target
 
     float3 finalColor = diffuse + ambient + specular;
 
-    return float4(finalColor, textureColor.a);
+    return float4(finalColor*0.5, textureColor.a);
 }

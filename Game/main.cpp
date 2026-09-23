@@ -14,7 +14,7 @@ class SandboxApp : public Application
 protected:
     bool OnStart() override
     {
-        if(!mWorld.Initialize(Device())) return false;
+        if(!mDemoWorld.Initialize(Device())) return false;
 
         mCamera.SetLookAt(
             {0.0f, 0.0f, -4.0f},
@@ -27,16 +27,16 @@ protected:
         OnResize(GetWindow().ClientWidth(), GetWindow().ClientHeight());
 
         Transform firstCubeTransform;
-        if(!mWorld.CreateCube(firstCubeTransform, {0, 0, 0}, false)) return false;
+        if(!mDemoWorld.CreateCube(firstCubeTransform, {0, 0, 0}, false)) return false;
 
         Transform secondCubeTransform;
         secondCubeTransform.position = {-2.0f, 0.0f, 1.0f};
-        if(!mWorld.CreateCube(secondCubeTransform, {2.0f, 0.0f, 0.0f}, false)) return false;
+        if(!mDemoWorld.CreateCube(secondCubeTransform, {2.0f, 0.0f, 0.0f}, false)) return false;
 
         Transform thirdCubeTransform;
         thirdCubeTransform.position = {2.0f, -1.0f, 0.0f};
         thirdCubeTransform.scale = thirdCubeTransform.scale * 0.5f;
-        if(!mWorld.CreateCube(thirdCubeTransform, {0.0f, 3.0f, 0.0f}, true)) return false;
+        if(!mDemoWorld.CreateCube(thirdCubeTransform, {0.0f, 3.0f, 0.0f}, true)) return false;
 
         return true;
     }
@@ -51,18 +51,18 @@ protected:
     {
         const InputState& in = Input();
 
-        mWorld.Update(deltaTime);
+        mDemoWorld.Update(deltaTime);
         
-        if(in.IsDown(Key::Up)) mWorld.MoveSelectedCube({0,0,1}, deltaTime);
-        if(in.IsDown(Key::Left)) mWorld.MoveSelectedCube({-1,0,0}, deltaTime);
-        if(in.IsDown(Key::Down)) mWorld.MoveSelectedCube({0,0,-1}, deltaTime);
-        if(in.IsDown(Key::Right)) mWorld.MoveSelectedCube({1,0,0}, deltaTime);
+        if(in.IsDown(Key::Up)) mDemoWorld.MoveSelectedCube({0,0,1}, deltaTime);
+        if(in.IsDown(Key::Left)) mDemoWorld.MoveSelectedCube({-1,0,0}, deltaTime);
+        if(in.IsDown(Key::Down)) mDemoWorld.MoveSelectedCube({0,0,-1}, deltaTime);
+        if(in.IsDown(Key::Right)) mDemoWorld.MoveSelectedCube({1,0,0}, deltaTime);
 
-        if(in.WasPressed(Key::R)) mWorld.Reset();
-        if(in.WasPressed(Key::Space)) mWorld.ToggleSelectedCubeRotation();
-        if(in.WasPressed(Key::Num1)) mWorld.SelectCube(0);
-        if(in.WasPressed(Key::Num2)) mWorld.SelectCube(1);
-        if(in.WasPressed(Key::Num3)) mWorld.SelectCube(2);
+        if(in.WasPressed(Key::R)) mDemoWorld.Reset();
+        if(in.WasPressed(Key::Space)) mDemoWorld.ToggleSelectedCubeRotation();
+        if(in.WasPressed(Key::Num1)) mDemoWorld.SelectCube(0);
+        if(in.WasPressed(Key::Num2)) mDemoWorld.SelectCube(1);
+        if(in.WasPressed(Key::Num3)) mDemoWorld.SelectCube(2);
 
         // Orbit Camera
         // mCameraAngle += mCameraSpeed * deltaTime;
@@ -76,14 +76,14 @@ protected:
 
     void OnRender(Renderer& renderer) override
     {
-        const bool rendered = mWorld.Render(renderer, mCamera);
+        const bool rendered = mDemoWorld.Render(renderer, mCamera);
         if(!rendered && !mRenderFailureReported)
             Core::LogError("Actor world rendering failed.");
         mRenderFailureReported = !rendered;
     }
 
 private:
-    DemoWorld        mWorld;
+    DemoWorld        mDemoWorld;
     Camera           mCamera;
     bool             mRenderFailureReported = false;
 };

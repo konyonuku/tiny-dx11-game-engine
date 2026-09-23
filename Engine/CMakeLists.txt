@@ -4,6 +4,7 @@ add_library(Engine STATIC
     Core/Application.h Core/Application.cpp
     Platform/Window.h Platform/Window.cpp
     Platform/InputState.h Platform/InputState.cpp
+    Platform/Paths.h Platform/Paths.cpp
     Graphics/GraphicsDevice.h Graphics/GraphicsDevice.cpp
     Graphics/SwapChain.h Graphics/SwapChain.cpp
     Graphics/Renderer.h Graphics/Renderer.cpp
@@ -24,6 +25,8 @@ add_library(Engine STATIC
     GameFramework/Actor.h GameFramework/Actor.cpp
     GameFramework/ActorComponent.h GameFramework/ActorComponent.cpp
     GameFramework/StaticMeshComponent.h GameFramework/StaticMeshComponent.cpp
+
+    Resources/ResourceManager.h Resources/ResourceManager.cpp
 
     ${PROJECT_SOURCE_DIR}/External/stb_image.h
 )

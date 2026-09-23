@@ -3,6 +3,7 @@
 #include "Core/Log.h"
 #include "GameFramework/StaticMeshComponent.h"
 #include "Graphics/RenderTypes.h"
+#include "Platform/Paths.h"
 
 
 namespace
@@ -12,7 +13,11 @@ namespace
 
 bool DemoWorld::Initialize(GraphicsDevice& device)
 {
-    if(!mAssets.Create(device)) return false;
+    const std::filesystem::path executableDirectory = Platform::GetExecutableDirectory();
+    if(executableDirectory.empty()) return false;
+    if(!mResources.Initialize(device, executableDirectory / "Assets")) return false;
+
+    if(!mAssets.Create(device, mResources)) return false;
     Core::LogInfo("Actor demo initialized.");
     return true;
 }
