@@ -4,6 +4,7 @@
 #include <d3d11.h>
 
 #include "Graphics/Buffer.h"
+#include "Graphics/MeshData.h"
 
 
 class Mesh
@@ -11,6 +12,7 @@ class Mesh
 public:
     template <typename T>    
     bool Create(GraphicsDevice& device, const T* vertices, uint32_t vertexCount, const uint32_t* index, uint32_t indexCount);
+    bool Create(GraphicsDevice& device, const MeshData& data);
     void Bind(ID3D11DeviceContext* context) const;
     void Draw(ID3D11DeviceContext *context) const;
 

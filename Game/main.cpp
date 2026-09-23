@@ -26,17 +26,22 @@ protected:
         mCamera.SetPerspective(fovY, 1.f, 0.1f, 100.f);
         OnResize(GetWindow().ClientWidth(), GetWindow().ClientHeight());
 
-        Transform firstCubeTransform;
-        if(!mDemoWorld.CreateCube(firstCubeTransform, {0, 0, 0}, false)) return false;
+        // Actor 1: MaleBaseMesh.obj is ~20.7 units tall with its feet at y = 0,
+        // so scale 0.1 makes it ~2 units and y = -1 centers it on screen. Faces the camera.
+        Transform maleTransform;
+        maleTransform.position = {0.0f, -1.0f, 0.0f};
+        maleTransform.scale = maleTransform.scale * 0.1f;
+        if(!mDemoWorld.CreateDemoActor("Models/MaleBaseMesh.obj", maleTransform, {0.0f, 1.5f, 0.0f}, false)) return false;
 
         Transform secondCubeTransform;
         secondCubeTransform.position = {-2.0f, 0.0f, 1.0f};
-        if(!mDemoWorld.CreateCube(secondCubeTransform, {2.0f, 0.0f, 0.0f}, false)) return false;
+        if(!mDemoWorld.CreateDemoActor(DemoAssets::kCubeMeshKey, secondCubeTransform, {2.0f, 0.0f, 0.0f}, false)) return false;
 
-        Transform thirdCubeTransform;
-        thirdCubeTransform.position = {2.0f, -1.0f, 0.0f};
-        thirdCubeTransform.scale = thirdCubeTransform.scale * 0.5f;
-        if(!mDemoWorld.CreateCube(thirdCubeTransform, {0.0f, 3.0f, 0.0f}, true)) return false;
+        // Wedge starts still so its orientation can be checked: the slope faces the camera,
+        // the tall wall is on the far (+Z) side. Space starts the Y rotation.
+        Transform wedgeTransform;
+        wedgeTransform.position = {2.0f, -1.0f, 0.0f};
+        if(!mDemoWorld.CreateDemoActor("Models/wedge.obj", wedgeTransform, {0.0f, 3.0f, 0.0f}, false)) return false;
 
         return true;
     }

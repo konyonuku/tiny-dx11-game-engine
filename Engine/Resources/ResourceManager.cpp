@@ -1,5 +1,6 @@
 #include "Resources/ResourceManager.h"
 
+#include <cctype>
 #include <cstddef>
 #include <iterator>
 #include <system_error>
@@ -11,6 +12,7 @@
 #include "Graphics/Shader.h"
 #include "Graphics/Texture2D.h"
 #include "Graphics/Vertex.h"
+#include "Resources/ObjLoader.h"
 
 
 bool ResourceManager::Initialize(GraphicsDevice& device, const std::filesystem::path& absoluteAssetRoot)
@@ -89,6 +91,44 @@ std::shared_ptr<Shader> ResourceManager::LoadShaderPNUV(const std::string& key)
 
     mShaders.emplace(*normalized, shader);
     return shader;
+}
+
+std::shared_ptr<Mesh> ResourceManager::LoadMesh(const std::string& key)
+{
+    if(!mDevice) return nullptr;
+
+    const std::optional<std::string> normalized = NormalizeKey(key);
+    if(!normalized) {
+        Core::LogError("Invalid mesh key: '%s'", key.c_str());
+        return nullptr;
+    }
+
+    if(auto found = mMeshes.find(*normalized); found != mMeshes.end())
+        return found->second;
+
+    std::string extension = std::filesystem::path(*normalized).extension().string();
+    for(char& c : extension)
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    if(extension != ".obj") {
+        Core::LogError("Unsupported mesh format (only .obj): %s", normalized->c_str());
+        return nullptr;
+    }
+
+    const std::filesystem::path fullPath = mAssetRoot / *normalized;
+    const std::optional<MeshData> data = ObjLoader::LoadFromFile(fullPath);
+    if(!data) {
+        Core::LogError("Mesh load failed. key=%s path=%s", normalized->c_str(), fullPath.string().c_str());
+        return nullptr;
+    }
+
+    auto mesh = std::make_shared<Mesh>();
+    if(!mesh->Create(*mDevice, *data)) {
+        Core::LogError("Mesh GPU buffer creation failed. key=%s", normalized->c_str());
+        return nullptr;
+    }
+
+    mMeshes.emplace(*normalized, mesh);
+    return mesh;
 }
 
 std::shared_ptr<Mesh> ResourceManager::FindMesh(const std::string& key) const

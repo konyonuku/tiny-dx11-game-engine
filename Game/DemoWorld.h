@@ -1,5 +1,6 @@
 #pragma once
 #include <optional>
+#include <string>
 
 #include "Math/Vector.h"
 #include "Graphics/Camera.h"
@@ -16,7 +17,9 @@ class DemoWorld
 {
 public:
     bool Initialize(GraphicsDevice& device);
-    bool CreateCube(const Transform& transform, const Vector3& rotationSpeed, bool isRotating);
+    // Every demo actor is a movable Cube actor; only the mesh key differs.
+    bool CreateDemoActor(const std::string& meshKey, const Transform& transform,
+                         const Vector3& rotationSpeed, bool isRotating);
     bool SelectCube(std::size_t index);
     void MoveSelectedCube(const Vector3& direction, float deltaTime);
     void ToggleSelectedCubeRotation();

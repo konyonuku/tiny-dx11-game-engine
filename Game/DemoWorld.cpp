@@ -22,9 +22,16 @@ bool DemoWorld::Initialize(GraphicsDevice& device)
     return true;
 }
 
-bool DemoWorld::CreateCube(const Transform& transform, const Vector3& rotationSpeed, bool isRotating)
+bool DemoWorld::CreateDemoActor(const std::string& meshKey, const Transform& transform,
+                                const Vector3& rotationSpeed, bool isRotating)
 {
-    if(!mAssets.cubeMesh || !mAssets.material) return false;
+    // File key ("Models/x.obj") loads once and is shared; a registered key
+    // ("Procedural/UnitCube") is returned from the same cache without touching the disk.
+    const std::shared_ptr<Mesh> mesh = mResources.LoadMesh(meshKey);
+    if(!mesh || !mAssets.material) {
+        Core::LogError("Demo actor creation failed. mesh=%s", meshKey.c_str());
+        return false;
+    }
 
     Cube* cube = mActorWorld.SpawnActor<Cube>();
     if(!cube) return false;
@@ -40,7 +47,7 @@ bool DemoWorld::CreateCube(const Transform& transform, const Vector3& rotationSp
     cube->SetRotationSpeed(initial.rotationSpeed);
     cube->SetIsRotating(initial.isRotating);
     cube->SetMovementSpeed(initial.movementSpeed);
-    meshComponent->SetMesh(mAssets.cubeMesh);
+    meshComponent->SetMesh(mesh);
     meshComponent->SetMaterial(mAssets.material);
 
     mCubeList.push_back(cube);

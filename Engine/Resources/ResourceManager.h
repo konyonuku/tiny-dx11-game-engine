@@ -20,6 +20,9 @@ public:
     std::shared_ptr<Texture2D> LoadTexture(const std::string& key);
     std::shared_ptr<Shader> LoadShaderPNUV(const std::string& key);
 
+    // File mesh (.obj only). Shares the mesh map with RegisterMesh:
+    // a key that is already registered returns the registered mesh without touching the disk.
+    std::shared_ptr<Mesh> LoadMesh(const std::string& key);
     std::shared_ptr<Mesh> FindMesh(const std::string& key) const;
     bool RegisterMesh(const std::string& key, std::shared_ptr<Mesh> mesh);
 

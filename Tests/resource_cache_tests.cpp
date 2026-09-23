@@ -26,6 +26,7 @@ namespace
     const fs::path kSourceAssets = fs::path(JITAI_SOURCE_ASSET_DIR);
     constexpr const char* kTextureKey = "Textures/uv_checker_256.png";
     constexpr const char* kShaderKey = "Shaders/Default.hlsl";
+    constexpr const char* kWedgeKey = "Models/wedge.obj";
 
     void Expect(bool condition, const std::string& message)
     {
@@ -43,6 +44,7 @@ namespace
             fs::remove_all(mRoot, ignored);
             fs::create_directories(mRoot / "Textures");
             fs::create_directories(mRoot / "Shaders");
+            fs::create_directories(mRoot / "Models");
         }
         ~TempAssetRoot()
         {
@@ -176,6 +178,52 @@ namespace
         Expect(!resources.FindMesh("Procedural/Null"), "rejected null must not be stored");
     }
 
+    void TestLoadMeshCachesAndSharesRegistry()
+    {
+        ResourceManager resources;
+        Expect(!resources.LoadMesh(kWedgeKey), "LoadMesh before Initialize must fail");
+        Expect(resources.Initialize(gDevice, kSourceAssets), "Initialize failed");
+
+        auto a = resources.LoadMesh(kWedgeKey);
+        auto b = resources.LoadMesh(kWedgeKey);
+        auto c = resources.LoadMesh("./Models/wedge.obj");
+        Expect(a != nullptr, "wedge.obj load failed");
+        Expect(a.get() == b.get(), "same key must return the same mesh");
+        Expect(a.get() == c.get(), "'./' key must normalize to the same mesh");
+        Expect(resources.FindMesh(kWedgeKey).get() == a.get(), "loaded mesh must be visible to FindMesh");
+        Expect(!resources.RegisterMesh(kWedgeKey, MakeMesh()), "Register must not overwrite a loaded mesh");
+
+        // A registered key wins: LoadMesh returns it without reading a file.
+        auto registered = MakeMesh();
+        Expect(resources.RegisterMesh("Models/virtual.obj", registered), "register failed");
+        Expect(resources.LoadMesh("Models/virtual.obj").get() == registered.get(), "LoadMesh must return the registered mesh");
+    }
+
+    void TestLoadMeshFailuresAreNotCached()
+    {
+        TempAssetRoot temp;
+        ResourceManager resources;
+        Expect(resources.Initialize(gDevice, temp.Path()), "Initialize failed");
+
+        // Missing, then appears.
+        Expect(!resources.LoadMesh(kWedgeKey), "missing mesh must fail");
+        temp.CopyFromSource(kWedgeKey);
+        Expect(resources.LoadMesh(kWedgeKey) != nullptr, "mesh must load after the file appears");
+
+        // Broken, then fixed.
+        temp.WriteText("Models/broken.obj", "v 0 0 0\nf 1 2 3\n");
+        Expect(!resources.LoadMesh("Models/broken.obj"), "broken obj must fail");
+        Expect(!resources.FindMesh("Models/broken.obj"), "failed load must not be cached");
+        temp.WriteText("Models/broken.obj", "v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n");
+        Expect(resources.LoadMesh("Models/broken.obj") != nullptr, "mesh must load after the file is fixed");
+
+        // Only .obj is accepted (case-insensitive), even when the file is a valid OBJ.
+        temp.WriteText("Models/triangle.txt", "v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n");
+        Expect(!resources.LoadMesh("Models/triangle.txt"), "non-.obj extension must fail");
+        temp.WriteText("Models/upper.OBJ", "v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n");
+        Expect(resources.LoadMesh("Models/upper.OBJ") != nullptr, "extension check must ignore case");
+    }
+
     void TestClearKeepsExternalReferences()
     {
         ResourceManager resources;
@@ -238,6 +286,8 @@ int main()
         {"invalid keys rejected", TestInvalidKeysRejected},
         {"failures are not cached", TestFailuresAreNotCached},
         {"mesh registry", TestMeshRegistry},
+        {"LoadMesh caches and shares the Register map", TestLoadMeshCachesAndSharesRegistry},
+        {"LoadMesh failures are not cached", TestLoadMeshFailuresAreNotCached},
         {"Clear keeps external references", TestClearKeepsExternalReferences},
         {"materials share shader and texture", TestMaterialsShareShaderAndTexture},
     };

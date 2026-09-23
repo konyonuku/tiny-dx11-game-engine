@@ -55,7 +55,6 @@ bool DemoAssets::Create(GraphicsDevice& graphicsDevice, ResourceManager& resourc
 {
     constexpr const char* kShaderKey = "Shaders/Default.hlsl";
     constexpr const char* kTextureKey = "Textures/uv_checker_256.png";
-    constexpr const char* kCubeMeshKey = "Procedural/UnitCube";
 
     std::shared_ptr<Shader> newShader = resources.LoadShaderPNUV(kShaderKey);
     if(!newShader) return false;

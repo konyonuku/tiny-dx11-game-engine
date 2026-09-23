@@ -20,6 +20,7 @@ add_library(Engine STATIC
     Graphics/RenderState.h Graphics/RenderState.cpp
     Graphics/RenderTypes.h
     Graphics/Vertex.h
+    Graphics/MeshData.h
 
     GameFramework/World.h GameFramework/World.cpp
     GameFramework/Actor.h GameFramework/Actor.cpp
@@ -27,8 +28,10 @@ add_library(Engine STATIC
     GameFramework/StaticMeshComponent.h GameFramework/StaticMeshComponent.cpp
 
     Resources/ResourceManager.h Resources/ResourceManager.cpp
+    Resources/ObjLoader.h Resources/ObjLoader.cpp
 
     ${PROJECT_SOURCE_DIR}/External/stb_image.h
+    ${PROJECT_SOURCE_DIR}/External/tiny_obj_loader.h
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
